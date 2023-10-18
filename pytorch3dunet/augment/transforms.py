@@ -707,6 +707,31 @@ class Transformer:
         return aug_class(**config)
 
 
+class VerboseIdentity:
+    def __init__(self, prefix, **kwargs):
+        print(f"#### verbose {prefix} init ####")
+        self.name = prefix
+        pass
+
+    def __call__(self, x):
+        print(f"{self.name}:: x.shape: {x.shape}; x.dtype: {x.dtype}")
+        return x
+
+
+class SampleOriginPoint:
+    def __init__(self, random_state, side, **kwargs):
+        self.random_state = random_state
+        self.s = side
+
+    def __call__(self, x):
+        px = self.random_state.randint(0, x.shape[1])
+        py = self.random_state.randint(0, x.shape[2])
+        pz = self.random_state.randint(0, x.shape[3])
+        x[-1] = x.new_zeros(x[-1].shape)
+        x[-1][max(px - self.s, 0):px + self.s, max(py - self.s, 0):py + self.s, max(pz - self.s, 0):pz + self.s] = 1.0
+        return x
+
+
 def _recover_ignore_index(input, orig, ignore_index):
     if ignore_index is not None:
         mask = orig == ignore_index
