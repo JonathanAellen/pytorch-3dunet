@@ -711,7 +711,6 @@ class VerboseIdentity:
     def __init__(self, prefix, **kwargs):
         print(f"#### verbose {prefix} init ####")
         self.name = prefix
-        pass
 
     def __call__(self, x):
         print(f"{self.name}:: x.shape: {x.shape}; x.dtype: {x.dtype}")
@@ -731,6 +730,13 @@ class SampleOriginPoint:
         x[-1][max(px - self.s, 0):px + self.s, max(py - self.s, 0):py + self.s, max(pz - self.s, 0):pz + self.s] = 1.0
         return x
 
+
+class ChooseChannel:
+    def __init__(self, idx, **kwargs):
+        self.idx = idx
+
+    def __call__(self, x):
+        return x[self.idx:self.idx+1]
 
 def _recover_ignore_index(input, orig, ignore_index):
     if ignore_index is not None:
